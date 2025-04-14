@@ -1,0 +1,52 @@
+version: "2.2"
+services:
+  jobmanager:
+    image: flink:1.19.1-java11
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        parallelism.default: 2
+      - MONGO_HOSTS="host.docker.internal:27017"
+    ports:
+      - "8181:8081"
+  taskmanager:
+    image: flink:1.19.1-java11
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 8
+        parallelism.default: 2
+  mongo:
+    image: bitnami/mongodb:5.0.6-debian-10-r35
+    environment:
+      - MONGODB_ROOT_PASSWORD=password
+      - MONGODB_USERNAME=mongo
+      - MONGODB_PASSWORD=password
+      - MONGODB_DATABASE=voicebot
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_NAME=rs0
+      - MONGODB_REPLICA_SET_KEY=replicaPassWd
+      - MONGODB_ADVERTISED_HOSTNAME=localhost
+    volumes:
+      - ./mongo/data/mongodb:/bitnami/mongodb
+      - ./mongo/rs-initiate.js:/docker-entrypoint-initdb.d/rs-initiate.js:ro
+    networks:
+      - internal-network
+    ports:
+      - "27017:27017"
+  postgres:
+    image: postgres:14.2
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+
