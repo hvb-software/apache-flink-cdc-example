@@ -1,0 +1,1 @@
+Sample code for an article: _[Syncing collections from MongoDB to PostgreSQL tables with Apache Flink CDC](https://hvb.software/blog/syncing-collections-from-mongodb-to-postgresql-tables-with-apache-flink-cdc/)_
