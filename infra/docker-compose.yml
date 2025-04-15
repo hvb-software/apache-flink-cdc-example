@@ -8,7 +8,6 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
         parallelism.default: 2
-      - MONGO_HOSTS="host.docker.internal:27017"
     ports:
       - "8181:8081"
   taskmanager:
